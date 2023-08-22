@@ -16,6 +16,8 @@ export class Map {
     }
     drawMinimap(ctx) {
         ctx.clearRect(0,0,this.game.width,this.game.height);
+        ctx.fillStyle = '#a0a0a0';
+        ctx.fillRect(0,0,this.game.width, this.game.height);
         ctx.fillStyle = '#55a002';
         let x = 0;
         let y = this.game.height - this.data.length*this.CELL_SIZE;
