@@ -91,5 +91,23 @@ export class Raycaster {
             ray.drawRay(origin,ctx);
         })
     }
+    drawWalls(ctx){
+        let wallHeight =0;
+        let drawStart = 0;
+        let drawEnd = 0;
+        for (let i=0; i < this.rays.length; i++) {
 
+            wallHeight = (this.game.height*this.game.map.CELL_SIZE)/this.rays[i].wallDist;
+            drawStart = -wallHeight/2 + this.game.height/2;
+            if (drawStart < 0) drawStart = 0;
+            drawEnd = wallHeight/2 + this.game.height/2;
+            if (drawEnd >= this.game.height) drawEnd=this.game.height -1;
+            if (this.rays[i].side == 0) ctx.strokeStyle = '#cc1111';
+            else ctx.strokeStyle = '#770000';
+            ctx.beginPath();
+            ctx.moveTo(this.game.width - this.rays.length + i,drawStart);
+            ctx.lineTo(this.game.width - this.rays.length + i, drawEnd);
+            ctx.stroke();
+        }
+    }
 }

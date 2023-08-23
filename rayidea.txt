@@ -1,4 +1,0 @@
-fov in radians, interpolated by columns on canvas
-^ scratch that. Ray plane and direction vector for player
-array of rays, still need to figure out collision
-collision with DDA, step by cell_size in x and y, use dot product on vector dir, increment step for smaller value

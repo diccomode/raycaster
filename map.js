@@ -15,21 +15,20 @@ export class Map {
         this.scale = s;
     }
     drawMinimap(ctx) {
-        ctx.clearRect(0,0,this.game.width,this.game.height);
+        ctx.beginPath();
+        ctx.strokeStyle = '#000000';
         ctx.fillStyle = '#a0a0a0';
         ctx.fillRect(0,0,this.game.width, this.game.height);
         ctx.fillStyle = '#55a002';
-        let x = 0;
-        let y = this.game.height - this.data.length*this.CELL_SIZE;
-    
+        
         for(let i=0;i<this.data.length;i++) {
             for (let j=0;j < this.data.length;j++) {
                 if (this.data[i][j] == 1) {
-                    ctx.fillRect(x+j*this.CELL_SIZE,y+i*this.CELL_SIZE,this.CELL_SIZE, this.CELL_SIZE);
-                    ctx.strokeRect(x+j*this.CELL_SIZE,y+i*this.CELL_SIZE,this.CELL_SIZE,this.CELL_SIZE);
+                    ctx.fillRect(j*this.CELL_SIZE,this.y_offset+i*this.CELL_SIZE,this.CELL_SIZE, this.CELL_SIZE);
+                    ctx.strokeRect(j*this.CELL_SIZE,this.y_offset+i*this.CELL_SIZE,this.CELL_SIZE,this.CELL_SIZE);
                 }
             }
         }
-        
+        ctx.closePath();
     }
 }

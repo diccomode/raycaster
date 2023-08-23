@@ -32,7 +32,7 @@ class Game {
         this.height=height;
         this.FrameTimer = 0;
         this.FrameInterval = 1000.0/70.0; //looks shitty at 60 fps for some reason
-        this.map = new Map(this, mapdata, 1);
+        this.map = new Map(this, mapdata, 0.3);
 
         window.addEventListener("resize", () => { //kind of a mess, handles resize
             canvas.width = window.innerWidth;   
@@ -46,6 +46,7 @@ class Game {
             this.map.h = this.map.scale*this.height;
             this.map.CELL_SIZE = Math.round((this.map.w >= this.map.h ? this.map.h : this.map.w) / this.map.getLength());
             this.map.y_offset = this.height - this.map.CELL_SIZE*this.map.getLength();
+
             //updating player coords after map resize
             this.player.size = Math.round(this.map.CELL_SIZE/2);
             this.player.pos.x = relx * this.map.getLength()*this.map.CELL_SIZE;

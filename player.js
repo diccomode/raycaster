@@ -17,7 +17,7 @@ export class Player {
         this.plane = this.planemx.multiplyVec(this.dir);
         this.size = Math.round(this.game.map.CELL_SIZE/2);
 
-        this.rays = new Raycaster(this.game, this, 500); //adjust how many rays
+        this.rays = new Raycaster(this.game, this, this.game.width); //adjust how many rays
         this.rays.setRaysDir(this.dir,this.plane);
 
         //define initial vertices of cube, transform them to reference units wrt center
@@ -43,18 +43,12 @@ export class Player {
         this.friction = 0.1;
     }
     drawPlayer(ctx) {
-        //draw dir
+        //draw rays
         ctx.beginPath();
-        /*ctx.moveTo(this.pos.x + this.dir.x,this.pos.y+this.dir.y);
-        ctx.lineTo(this.pos.x, this.pos.y);
-        ctx.stroke();
-        ctx.moveTo(this.pos.x + this.dir.x+this.plane.x,this.pos.y+this.dir.y + this.plane.y);
-        ctx.lineTo(this.pos.x + this.dir.x-this.plane.x,this.pos.y+this.dir.y - this.plane.y);
-        ctx.stroke();*/
         ctx.strokeStyle= '#e41311';
         this.rays.drawRays(this.pos,ctx);
         ctx.closePath();
-
+        //draw shape
         ctx.beginPath();
         ctx.strokeStyle = '#000000';
         ctx.moveTo(this.vertices[0].x, this.vertices[0].y);
@@ -65,20 +59,22 @@ export class Player {
         ctx.stroke();
         ctx.fillStyle = '#0000ff';
         ctx.fill();
+        ctx.closePath();
+        this.rays.drawWalls(ctx);
     }
     update(input){
         this.acc = this.game.map.CELL_SIZE * this.acc_multiplier; // could add this to resize func but its fine here for now
-        if (input.includes('s')) {
-            this.acc_v.y = this.acc;
+        if (input.includes('w') && !input.includes('s')) {
+            this.acc_v = this.dir;
         }
-        if (input.includes('w')) {
-            this.acc_v.y = -this.acc;
+        if (input.includes('s') && !input.includes('w')) {
+            this.acc_v = this.dir.mult(-1);
         }
-        if (input.includes('a')) {
-            this.acc_v.x = -this.acc;
+        if (input.includes('a') && !input.includes('d')) {
+            this.acc_v = this.acc_v.add(this.plane.mult(-1));
         }
-        if (input.includes('d')) {
-            this.acc_v.x = this.acc;
+        if (input.includes('d') && !input.includes('a')) {
+            this.acc_v = this.acc_v.add(this.plane);
         }
         if (input.includes('q')) {
             this.ang_vel = -0.04;
@@ -86,11 +82,8 @@ export class Player {
         if (input.includes('e')) {
             this.ang_vel = 0.04;
         }
-        if (!(input.includes('s') || input.includes('w'))) {
-            this.acc_v.y=0;
-        }
-        if (!(input.includes('a') || input.includes('d'))) {
-            this.acc_v.x=0;
+        if (!(input.includes('s') || input.includes('w') || input.includes('a') || input.includes('d'))) {
+            this.acc_v = this.acc_v.mult(0);
         }
         if (!(input.includes('q') || input.includes('e'))) {
             this.ang_vel=0;
@@ -107,8 +100,8 @@ export class Player {
 
         //rotation
         this.mx.rotMx(this.angle);
-        this.dir = this.mx.multiplyVec(new Vector(0,1)); //random length so I can see for now
-        this.plane = this.planemx.multiplyVec(this.dir);
+        this.dir = this.mx.multiplyVec(new Vector(0,1)); 
+        this.plane = this.planemx.multiplyVec(this.dir); //90 FOV when |plane| and |dir| are same
         let newDir;
 
         this.rays.setRaysDir(this.dir, this.plane);
