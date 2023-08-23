@@ -1,5 +1,5 @@
 import { Vector, Matrix } from "./vec_mat.js";
-import { Ray } from "./ray.js";
+import { Ray, Raycaster } from "./ray.js";
 
 export class Player {
     constructor(game) {
@@ -11,16 +11,14 @@ export class Player {
         this.mapX = Math.floor(this.pos.x/this.game.map.CELL_SIZE);
         this.mapY = Math.floor((this.pos.y - this.game.map.y_offset)/this.game.map.CELL_SIZE);
 
-        this.dir = new Vector(0,this.game.map.CELL_SIZE/2.0);
+        this.dir = new Vector(0,1);
         this.planemx = new Matrix(2,2);
         this.planemx.rotMx(Math.PI/2);
         this.plane = this.planemx.multiplyVec(this.dir);
         this.size = Math.round(this.game.map.CELL_SIZE/2);
 
-        this.rays = new Array(10);
-        for(let i=0; i < 10; i++) {
-            this.rays[i] = new Ray(this.dir.add(this.plane.mult((-5+i)/5)));
-        }
+        this.rays = new Raycaster(this.game, this, 500); //adjust how many rays
+        this.rays.setRaysDir(this.dir,this.plane);
 
         //define initial vertices of cube, transform them to reference units wrt center
         this.vertices_ref = [
@@ -47,16 +45,14 @@ export class Player {
     drawPlayer(ctx) {
         //draw dir
         ctx.beginPath();
-        ctx.moveTo(this.pos.x + this.dir.x,this.pos.y+this.dir.y);
+        /*ctx.moveTo(this.pos.x + this.dir.x,this.pos.y+this.dir.y);
         ctx.lineTo(this.pos.x, this.pos.y);
         ctx.stroke();
         ctx.moveTo(this.pos.x + this.dir.x+this.plane.x,this.pos.y+this.dir.y + this.plane.y);
         ctx.lineTo(this.pos.x + this.dir.x-this.plane.x,this.pos.y+this.dir.y - this.plane.y);
-        ctx.stroke();
+        ctx.stroke();*/
         ctx.strokeStyle= '#e41311';
-        this.rays.forEach(ray => {
-            ray.drawRay(this.pos,ctx);
-        });
+        this.rays.drawRays(this.pos,ctx);
         ctx.closePath();
 
         ctx.beginPath();
@@ -108,15 +104,15 @@ export class Player {
         this.pos = this.pos.add(this.vel_v);
         this.mapX = Math.floor(this.pos.x/this.game.map.CELL_SIZE);
         this.mapY = Math.floor((this.pos.y - this.game.map.y_offset)/this.game.map.CELL_SIZE);
+
         //rotation
         this.mx.rotMx(this.angle);
-        this.dir = this.mx.multiplyVec(new Vector(0,this.game.map.CELL_SIZE/2.0)); //random length so I can see for now
+        this.dir = this.mx.multiplyVec(new Vector(0,1)); //random length so I can see for now
         this.plane = this.planemx.multiplyVec(this.dir);
         let newDir;
 
-        for(let i=0; i < 10; i++) {
-            this.rays[i].setDir(this.dir.add(this.plane.mult((-4.5+i)/4.5)));
-        }
+        this.rays.setRaysDir(this.dir, this.plane);
+        this.rays.cast();
 
         //simple loop, already have reference vectors and rotation mx set up  
         for(let i = 0; i < this.vertices_ref.length; i++){
