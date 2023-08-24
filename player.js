@@ -47,7 +47,9 @@ export class Player {
         ctx.beginPath();
         ctx.strokeStyle= '#e41311';
         this.rays.drawRays(this.pos,ctx);
-        ctx.closePath();
+        ctx.closePath(); 
+
+
         //draw shape
         ctx.beginPath();
         ctx.strokeStyle = '#000000';
@@ -60,7 +62,7 @@ export class Player {
         ctx.fillStyle = '#0000ff';
         ctx.fill();
         ctx.closePath();
-        this.rays.drawWalls(ctx);
+        //this.rays.drawWalls(ctx);
     }
     update(input){
         this.acc = this.game.map.CELL_SIZE * this.acc_multiplier; // could add this to resize func but its fine here for now

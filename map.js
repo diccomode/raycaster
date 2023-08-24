@@ -18,7 +18,8 @@ export class Map {
         ctx.beginPath();
         ctx.strokeStyle = '#000000';
         ctx.fillStyle = '#a0a0a0';
-        ctx.fillRect(0,0,this.game.width, this.game.height);
+        ctx.clearRect(0,this.y_offset,this.CELL_SIZE*this.data.length,this.CELL_SIZE*this.data.length);
+        ctx.fillRect(0,this.y_offset,this.CELL_SIZE*this.data.length,this.CELL_SIZE*this.data.length);
         ctx.fillStyle = '#55a002';
         
         for(let i=0;i<this.data.length;i++) {

@@ -32,7 +32,7 @@ class Game {
         this.height=height;
         this.FrameTimer = 0;
         this.FrameInterval = 1000.0/70.0; //looks shitty at 60 fps for some reason
-        this.map = new Map(this, mapdata, 0.3);
+        this.map = new Map(this, mapdata, 0.2);
 
         window.addEventListener("resize", () => { //kind of a mess, handles resize
             canvas.width = window.innerWidth;   
@@ -58,8 +58,10 @@ class Game {
     update(deltatime){
         this.FrameTimer += deltatime;
         if (this.FrameTimer > this.FrameInterval) {
-            this.map.drawMinimap(ctx);
+            ctx.clearRect(0,0,this.width, this.height);
             this.player.update(this.input.keys);
+            this.player.rays.drawWalls(ctx);
+            this.map.drawMinimap(ctx);
             this.player.drawPlayer(ctx);
             this.FrameTimer = 0;
         }
